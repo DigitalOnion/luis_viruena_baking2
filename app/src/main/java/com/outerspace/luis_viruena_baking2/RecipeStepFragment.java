@@ -15,24 +15,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.outerspace.luis_viruena_baking2.databinding.FragmentRecipeStepBinding;
-import com.outerspace.luis_viruena_baking2.exo.BPlayerViewModel;
 
 public class RecipeStepFragment extends Fragment {
     private FragmentRecipeStepBinding binding;
-    BPlayerViewModel bpViewModel;  // TODO Remove bpViewModel
     private MainViewModel mainViewModel;
     private RecipeStepAdapter adapter;
 
     public RecipeStepFragment() { }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // viewModel's lifecycle owner should be common in between fragments
-        bpViewModel = new ViewModelProvider(getActivity()).get(BPlayerViewModel.class); // todo remove
         mainViewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_step, container, false);
-        binding.setViewModel(bpViewModel);  // todo remove
         return binding.getRoot();
     }
 
