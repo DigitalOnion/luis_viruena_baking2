@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="bPlayerViewModel"
+            type="com.outerspace.luis_viruena_baking2.exo.BPlayerViewModel" />
+        <variable
+            name="step"
+            type="com.outerspace.luis_viruena_baking2.helper.StepToBind" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context=".RecipeDetailFragment">
+
+        <TextView
+            android:id="@+id/recipe_title"
+            android:text="@{step.title}"
+            tools:text="Recipe Title"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            style="@style/step_name"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.outerspace.luis_viruena_baking2.exo.BPlayerView
+            android:id="@+id/b_player"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{step.ingredients.empty || step.videoURL.empty ? View.VISIBLE : View.GONE }"
+            app:viewModel="@{bPlayerViewModel}"
+            app:videoUrl="@{step.videoURL}"
+            tools:layout_height="230dp"
+            app:resize_mode="fixed_width"
+            app:layout_constraintTop_toBottomOf="@id/recipe_title"/>
+
+        <TextView
+            android:id="@+id/fullDescription"
+            android:text="@{step.description}"
+            android:visibility="@{step.ingredients.empty ? View.VISIBLE : View.GONE }"
+            style="@style/step_full_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/b_player" />
+
+        <WebView
+            tools:ignore="WebViewLayout"
+            android:id="@+id/ingredient_table"
+            android:visibility="@{step.ingredients.empty ? View.GONE : View.VISIBLE }"
+            app:ingredients="@{step.ingredients}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/fullDescription"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

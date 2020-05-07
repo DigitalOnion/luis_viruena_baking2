@@ -1,0 +1,23 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="step_name">
+        <item name="fontFamily">sans-serif-black</item>
+        <item name="android:textSize">@dimen/stepNameTextSize</item>
+        <item name="android:layout_marginTop">@dimen/stepMargin</item>
+    </style>
+
+    <style name="step_full_description">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/stepFullDescriptionTextSize</item>
+        <item name="android:layout_marginTop">@dimen/stepMargin</item>
+    </style>
+
+</resources>

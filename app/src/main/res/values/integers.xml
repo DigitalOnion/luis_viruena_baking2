@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="column_count_on_tablet">3</integer>
+
+    <integer name="quarter_of_a_second">250</integer>
+    <integer name="third_of_a_second">333</integer>
+    <integer name="half_a_second">500</integer>
+
+    <integer name="min_swipe_velocity">2000</integer>
+</resources>

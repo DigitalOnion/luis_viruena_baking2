@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">luis_viruena_baking2</string>
+    <string name="app_label">The Baking App</string>
+
+    <string name="test_button">Test Button</string>
+
+    <string name="ingredients">Ingredients</string>
+
+    <string name="wanna_exit">Do you want to exit the Baking App?</string>
+    <string name="exit_app">Exit</string>
+    <string name="back_to_app">Stay</string>
+    <string name="try_again">Try again</string>
+
+    <string name="network_error_title">network error</string>
+    <string name="network_error_message">There was a network error.\nPlease check your connection or try again later.</string>
+    <string name="empty_response_title">Empty Recipe List</string>
+    <string name="empty_response_message">The recipe repository sent an empty list.\nThis might be a server error.\nPlease try again later.</string>
+
+    <string name="toast_message">Swipe up or down for other steps</string>
+
+    <string name="splash_text_title">The Baking app</string>
+    <string name="splash_text_message">Udacity Android Nanodegree project app</string>
+    <string name="splash_text_credits">Luis Virueña</string>
+
+</resources>

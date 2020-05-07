@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="progress_bar_size">50dp</dimen>
+
+    <!-- margins and general sizes -->
+    <dimen name="app_margin">16dp</dimen>
+    <dimen name="recipeListMargin">16dp</dimen>
+    <dimen name="recipeListCardHeight">64dp</dimen>
+    <dimen name="recipeListTextSize">18sp</dimen>
+    <dimen name="recipeListBorderWidth">2dp</dimen>
+    <dimen name="recipeListCornerRadius">7dp</dimen>
+    <dimen name="stepsToastCornerRadius">30dp</dimen>
+
+    <dimen name="stepMargin">16dp</dimen>
+    <dimen name="stepNameTextSize">24sp</dimen>
+    <dimen name="stepFullDescriptionTextSize">16sp</dimen>
+
+    <!-- text sizes -->
+    <dimen name="title_text_size">24sp</dimen>
+</resources>

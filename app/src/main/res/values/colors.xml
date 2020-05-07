@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+
+    <color name="pretty_pink">#FFD3D3</color>
+    <color name="moon_like_blue">#D3D3FF</color>
+    <color name="beer_yellow">#FFFEE8</color>
+    <color name="green_selected_item">#BBFF00</color>
+
+    <color name="splash_pink">#FF49BB</color>
+    <color name="splash_text_color">#8C2766</color>
+</resources>
