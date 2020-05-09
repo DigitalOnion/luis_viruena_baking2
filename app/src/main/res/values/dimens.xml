@@ -17,4 +17,9 @@
 
     <!-- text sizes -->
     <dimen name="title_text_size">24sp</dimen>
+
+    <!-- Splash Screen  -->
+    <dimen name="top_splash">0dp</dimen>
+    <dimen name="start_splash">0dp</dimen>
+    <dimen name="end_splash">0dp</dimen>
 </resources>

@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import com.outerspace.luis_viruena_baking2.api.Recipe;
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_BEHAVIOR = "behavior";
     private int[] arrayPages;
 
+    private static final String SPLASH = "splash_tag";
+
     @FunctionalInterface
     interface ArraySupplier<E> {
         E[] get(int length);
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.setSmallScreen(binding.phoneScreenLayout != null);
 
+        // gets ViewPager ready
         arrayPages = new int[] {0, 1, 2};
         Class[] fragmentClassArray = new Class[] {
                 RecipeListFragment.class, RecipeStepFragment.class, RecipeDetailFragment.class
@@ -91,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             mainViewModel.getMutableRecipeList().setValue(recipeList);
         }
     }
+
     private void fetchRecipeListFromModel() {
         ModelBehavior behavior = (ModelBehavior) getIntent().getSerializableExtra(EXTRA_BEHAVIOR);
         IRecipeModel model = new RecipeModelFactory.Builder().setBehavior(behavior).build();
