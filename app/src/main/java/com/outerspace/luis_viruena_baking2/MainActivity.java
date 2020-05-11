@@ -12,11 +12,13 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.annotation.SuppressLint;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.outerspace.luis_viruena_baking2.api.Recipe;
 import com.outerspace.luis_viruena_baking2.databinding.ActivityMainBinding;
@@ -52,13 +54,27 @@ public class MainActivity extends AppCompatActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        mainViewModel.setSmallScreen(binding.phoneScreenLayout != null);
+        // todo: research on why this is not working:
+        // boolean largeScreen = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE;
+        boolean smallScreen = binding.mainScreenLayout.getTag().equals("phone_screen");
+        mainViewModel.setSmallScreen(smallScreen);
+
+        // sets the toolbar
+        setSupportActionBar(binding.toolbar);
 
         // gets ViewPager ready
-        arrayPages = new int[] {0, 1, 2};
-        Class[] fragmentClassArray = new Class[] {
-                RecipeListFragment.class, RecipeStepFragment.class, RecipeDetailFragment.class
-        };
+        Class[] fragmentClassArray;
+        if(mainViewModel.isSmallScreen()) {
+            arrayPages = new int[] {0, 1, 2};
+            fragmentClassArray = new Class[] {
+                    RecipeListFragment.class, RecipeStepFragment.class, RecipeDetailFragment.class
+            };
+        } else {
+            arrayPages = new int[] {0, 1, 1};
+            fragmentClassArray = new Class[] {
+                    RecipeListFragment.class, RecipeStepAndDetailFragment.class
+            };
+        }
 
         RecipePagerAdapter adapter = new RecipePagerAdapter(getSupportFragmentManager(), fragmentClassArray);
         binding.pager.setAdapter(adapter);
@@ -87,6 +103,17 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton(R.string.try_again, (dialog, which) -> fetchRecipeListFromModel())
                     .create().show();
         });
+
+        mainViewModel.getMutableShowToast().observe(this, showToast -> {
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.toast_recipe_detail, findViewById(R.id.toast_layout));
+            Toast toast = new Toast(this);
+            toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM,0, 100);
+            toast.setDuration(Toast.LENGTH_SHORT);
+            toast.setView(layout);
+            toast.show();
+        });
+
 
         List<Recipe> recipeList = mainViewModel.getMutableRecipeList().getValue();
         if( recipeList == null) {

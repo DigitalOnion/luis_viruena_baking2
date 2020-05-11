@@ -18,6 +18,18 @@
         <item name="android:layout_marginTop">@dimen/stepMargin</item>
     </style>
 
+    <style name="step_name_shadow">
+        <item name="fontFamily">sans-serif-black</item>
+        <item name="android:textSize">@dimen/stepNameTextSize</item>
+        <item name="android:elevation">@dimen/title_elevation</item>
+        <item name="android:layout_marginTop">@dimen/stepMargin</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:shadowColor">@android:color/white</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowRadius">@dimen/stepNameShadowRadius</item>
+    </style>
+
     <style name="step_full_description">
         <item name="fontFamily">sans-serif-medium</item>
         <item name="android:textSize">@dimen/stepFullDescriptionTextSize</item>

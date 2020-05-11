@@ -31,6 +31,9 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<Integer> mutableStepSelection = new MutableLiveData<>();
     public MutableLiveData<Integer> getMutableStepSelection() { return mutableStepSelection; }
 
+    private MutableLiveData<Boolean> mutableShowToast = new MutableLiveData<>();
+    public MutableLiveData<Boolean> getMutableShowToast() { return mutableShowToast; }
+
     // I was finding a bug with MutableLiveData<Integer> the observer was fired before setValue,
     // because the Integer sets the default value when created
     // the solution I found is to add the observer before assigning the MutableLiveData

@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">luis_viruena_baking2</string>
     <string name="app_label">The Baking App</string>
+    <style name="phone_screen">phone_screen</style>
+    <style name="tablet_screen">tablet_screen</style>
 
     <string name="widget_button_text">Let\'s bake it!</string>
 
@@ -16,10 +18,8 @@
     <string name="empty_response_title">Empty Recipe List</string>
     <string name="empty_response_message">The recipe repository sent an empty list.\nThis might be a server error.\nPlease try again later.</string>
 
-    <string name="toast_message">Swipe up or down for other steps</string>
-
-    <string name="splash_text_title">The Baking app</string>
-    <string name="splash_text_message">Udacity Android Nanodegree project app</string>
-    <string name="splash_text_credits">Luis Virueña</string>
+    <string name="toast_message">for other steps</string>
+    <string name="toast_message_up">Swipe up</string>
+    <string name="toast_message_down">or down</string>
 
 </resources>

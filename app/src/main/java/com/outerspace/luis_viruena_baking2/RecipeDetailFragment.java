@@ -9,11 +9,13 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import com.outerspace.luis_viruena_baking2.databinding.FragmentRecipeDetailBinding;
 import com.outerspace.luis_viruena_baking2.exo.BPlayerViewModel;
@@ -67,7 +69,13 @@ public class RecipeDetailFragment extends Fragment implements OnSwipeGestureList
         bpViewModel.getMutablePlaybackPosition().setValue(bpViewModel.getMutablePlaybackPosition().getValue());
     }
 
-        @Override
+    @Override
+    public void onResume() {
+        super.onResume();
+        mainViewModel.getMutableShowToast().setValue(true);
+    }
+
+    @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         // rate = |velocityY/VelocityX|; it tells the direction of the swipe.
         // rate > 1 ==> greater than 45 degrees => swipe up or down
