@@ -7,7 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
-import java.util.Random;
+/**
+ * Credit:  How to code a simple Android widget
+ *          https://www.androidauthority.com/create-simple-android-widget-608975/
+ *
+ *          Build an App Widget - the Android Developer documentation
+ *          https://developer.android.com/guide/topics/appwidgets
+ */
 
 public class BakingWidgetProvider extends AppWidgetProvider {
 

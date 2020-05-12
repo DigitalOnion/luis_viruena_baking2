@@ -1,0 +1,78 @@
+[
+    {
+        "id": 1,
+        "name": "Luis's greatest Pie",
+        "ingredients": [
+            {
+                "quantity": 2,
+                "measure": "CUP",
+                "ingredient": "Luis Cracker crumbs"
+            },
+            {
+                "quantity": 6,
+                "measure": "TBLSP",
+                "ingredient": "Luis's melted butter"
+            },
+            {
+                "quantity": 0.5,
+                "measure": "CUP",
+                "ingredient": "Luis's granulated sugar"
+            },
+            {
+                "quantity": 1.5,
+                "measure": "TSP",
+                "ingredient": "Luis' salt"
+            },
+            {
+                "quantity": 5,
+                "measure": "TBLSP",
+                "ingredient": "Luis's vanilla"
+            },
+            {
+                "quantity": 1,
+                "measure": "K",
+                "ingredient": "Nutella, no substitutions please"
+            },
+            {
+                "quantity": 500,
+                "measure": "G",
+                "ingredient": "Luis Cheese (room temperature)"
+            },
+            {
+                "quantity": 1,
+                "measure": "CUP",
+                "ingredient": "Luis' heavy cream(cold)"
+            },
+            {
+                "quantity": 4,
+                "measure": "OZ",
+                "ingredient": "Luis' cream cheese(softened)"
+            }
+        ],
+        "steps": [
+            {
+                "id": 0,
+                "shortDescription": "Recipe Introduction",
+                "description": "Recipe Introduction",
+                "videoURL": "https://d17h27t6h515a5.cloudfront.net/topher/2017/April/58ffd974_-intro-creampie/-intro-creampie.mp4",
+                "thumbnailURL": ""
+            },
+            {
+                "id": 1,
+                "shortDescription": "Starting prep",
+                "description": "1. Preheat the oven to 350°F. Butter a 9\" deep dish pie pan.",
+                "videoURL": "",
+                "thumbnailURL": ""
+            },
+            {
+                "id": 2,
+                "shortDescription": "Buy at your nearest store.",
+                "description": "Walk to the nearest convenience store and buy it.",
+                "videoURL": "https://d17h27t6h515a5.cloudfront.net/topher/2017/April/58ffd9a6_2-mix-sugar-crackers-creampie/2-mix-sugar-crackers-creampie.mp4",
+                "thumbnailURL": ""
+            }
+        ],
+        "servings": 8,
+        "image": ""
+    }
+]

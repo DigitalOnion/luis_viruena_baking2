@@ -12,12 +12,10 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.outerspace.luis_viruena_baking2.api.Recipe;
@@ -45,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         E[] get(int length);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,10 +91,21 @@ public class MainActivity extends AppCompatActivity {
 
         mainViewModel.getMutableNetworkError().observe(this, httpErrorCode -> {
             mainViewModel.getMutableOnProgress().setValue(false);
-            @StringRes int title = httpErrorCode == HttpURLConnection.HTTP_NO_CONTENT ?
-                    R.string.empty_response_title : R.string.network_error_title;
-            @StringRes int message = httpErrorCode == HttpURLConnection.HTTP_NO_CONTENT ?
-                    R.string.empty_response_message : R.string.network_error_message;
+            int title, message;
+            switch (httpErrorCode) {
+                case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                    title = R.string.internal_error_title;
+                    message = R.string.internal_error_message;
+                    break;
+                case HttpURLConnection.HTTP_NO_CONTENT:
+                    title = R.string.empty_response_title;
+                    message = R.string.empty_response_message;
+                    break;
+                default:
+                    title = R.string.network_error_title;
+                    message = R.string.network_error_message;
+            }
+
             new AlertDialog.Builder(this)
                     .setTitle(title)
                     .setMessage(message)
@@ -109,12 +119,15 @@ public class MainActivity extends AppCompatActivity {
             View layout = inflater.inflate(R.layout.toast_recipe_detail, findViewById(R.id.toast_layout));
             Toast toast = new Toast(this);
             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM,0, 100);
-            toast.setDuration(Toast.LENGTH_SHORT);
+            toast.setDuration(Toast.LENGTH_LONG);
             toast.setView(layout);
             toast.show();
         });
 
-
+        // Fetch for recipe list from the network.
+        // if the list is not already available in the mainViewModel, it will
+        // run the network request.
+        // but, if it is already available from a previous fetch, it uses it.
         List<Recipe> recipeList = mainViewModel.getMutableRecipeList().getValue();
         if( recipeList == null) {
             mainViewModel.getMutableOnProgress().setValue(true);
@@ -125,7 +138,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchRecipeListFromModel() {
-        ModelBehavior behavior = (ModelBehavior) getIntent().getSerializableExtra(EXTRA_BEHAVIOR);
+        ModelBehavior behavior;
+        if(getIntent().hasExtra(EXTRA_BEHAVIOR)) {
+            behavior = (ModelBehavior) getIntent().getSerializableExtra(EXTRA_BEHAVIOR);
+        } else {
+            behavior = ModelBehavior.NETWORK_REQUEST;
+        }
         IRecipeModel model = new RecipeModelFactory.Builder().setBehavior(behavior).build();
         model.fetchRecipeList(
                 mainViewModel.getMutableRecipeList(),
