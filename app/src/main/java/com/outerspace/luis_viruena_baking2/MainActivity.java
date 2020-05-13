@@ -12,10 +12,17 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.outerspace.luis_viruena_baking2.api.Recipe;
@@ -29,6 +36,8 @@ import java.net.HttpURLConnection;
 import java.util.List;
 
 import timber.log.Timber;
+
+import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 
 public class MainActivity extends AppCompatActivity {
     public ActivityMainBinding binding;
@@ -55,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         // todo: research on why this is not working:
         // boolean largeScreen = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE;
-        boolean smallScreen = binding.mainScreenLayout.getTag().equals("phone_screen");
+        boolean smallScreen = binding.mainScreenLayout.getTag().equals(getString(R.string.phone_screen));
         mainViewModel.setSmallScreen(smallScreen);
 
         // sets the toolbar
@@ -137,6 +146,45 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        int page = binding.pager.getCurrentItem();
+        if(page > 0) {
+            mainViewModel.getMutableViewPagerPage().setValue(page - 1);
+        } else {
+            new AlertDialog.Builder(this)
+                    .setMessage(R.string.wanna_exit)
+                    .setPositiveButton(R.string.exit_app, (dialog, which) -> super.onBackPressed())
+                    .setNegativeButton(R.string.back_to_app, null)
+                    .create().show();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.main_menu_about) {
+            showAboutDialog();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void showAboutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.about)
+                .setNeutralButton(R.string.thanks, null)
+                .setView(R.layout.about_dialog)
+                .create()
+                .show();
+    }
+
     private void fetchRecipeListFromModel() {
         ModelBehavior behavior;
         if(getIntent().hasExtra(EXTRA_BEHAVIOR)) {
@@ -156,20 +204,6 @@ public class MainActivity extends AppCompatActivity {
                     () -> binding.pager.setCurrentItem(arrayPages[page], true),
                     getResources().getInteger(R.integer.third_of_a_second));
         }).start();
-    }
-
-    @Override
-    public void onBackPressed() {
-        int page = binding.pager.getCurrentItem();
-        if(page > 0) {
-            mainViewModel.getMutableViewPagerPage().setValue(page - 1);
-        } else {
-            new AlertDialog.Builder(this)
-                    .setMessage(R.string.wanna_exit)
-                    .setPositiveButton(R.string.exit_app, (dialog, which) -> super.onBackPressed())
-                    .setNegativeButton(R.string.back_to_app, null)
-                    .create().show();
-        }
     }
 
     private static class RecipePagerAdapter extends FragmentPagerAdapter {

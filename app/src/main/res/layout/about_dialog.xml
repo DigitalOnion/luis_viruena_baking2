@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView"
+        app:srcCompat="@drawable/ic_widget"
+        android:scaleType="fitCenter"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_marginTop="@dimen/app_margin"
+        android:layout_marginBottom="@dimen/app_margin"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintWidth_percent="0.3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/label"
+        android:textSize="24sp"
+        android:fontFamily="sans-serif-black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/app_margin"
+        android:text="@string/app_label"
+        app:layout_constraintStart_toEndOf="@id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/credits"
+        android:textSize="14sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_label_credit"
+        app:layout_constraintStart_toEndOf="@id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label"/>
+
+    <TextView
+        android:id="@+id/author"
+        android:textSize="22sp"
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginTop="@dimen/app_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_label_author"
+        app:layout_constraintStart_toEndOf="@id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/credits"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,7 +10,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/main_screen_layout"
-        android:tag="tablet_screen"
+        android:tag="@string/tablet_screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/app_margin"
