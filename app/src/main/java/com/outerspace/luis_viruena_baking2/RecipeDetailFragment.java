@@ -1,5 +1,6 @@
 package com.outerspace.luis_viruena_baking2;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,13 +10,11 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.Toast;
 
 import com.outerspace.luis_viruena_baking2.databinding.FragmentRecipeDetailBinding;
 import com.outerspace.luis_viruena_baking2.exo.BPlayerViewModel;
@@ -40,12 +39,24 @@ public class RecipeDetailFragment extends Fragment implements OnSwipeGestureList
         binding.setBPlayerViewModel(bpViewModel);
         getLifecycle().addObserver(binding.bPlayer);
 
-        bpViewModel.getMutableVideoUrl().observe(this, binding.bPlayer::playVideo);
-        bpViewModel.getMutablePlaybackPosition().observe(this, binding.bPlayer::seekTo);
+        bpViewModel.getMutableVideoUrl().observe(this, videoUrl -> {
+            binding.bPlayer.playVideo(videoUrl);
+            getActivity().getPreferences(Context.MODE_PRIVATE)
+                    .edit()
+                    .putString(MainActivity.KEY_VIDEO_URL, videoUrl)
+                    .apply();
+        });
+        bpViewModel.getMutablePlaybackPosition().observe(this, position -> {
+            binding.bPlayer.seekTo(position);
+            getActivity().getPreferences(Context.MODE_PRIVATE)
+                    .edit()
+                    .putLong(MainActivity.KEY_PLAYBACK_POSITION, position)
+                    .apply();
+        });
 
         mainViewModel.getMutableStep().observe(this, (step) -> {
             StepToBind preStep = binding.getStep();
-            if(preStep != null && step != null && preStep.id != step.id) {
+            if(preStep != null && step != null && !preStep.id.equals(step.id)) {
                 bpViewModel.getMutablePlaybackPosition().setValue(0L);
             }
             binding.setStep(step);
@@ -65,8 +76,10 @@ public class RecipeDetailFragment extends Fragment implements OnSwipeGestureList
     @Override
     public void onStart() {
         super.onStart();
+        long playbackPosition = getActivity().getPreferences(Context.MODE_PRIVATE).getLong(MainActivity.KEY_PLAYBACK_POSITION, 0);
+        long vmPlaybackPosition = bpViewModel.getMutablePlaybackPosition().getValue();
         bpViewModel.getMutableVideoUrl().setValue(bpViewModel.getMutableVideoUrl().getValue());
-        bpViewModel.getMutablePlaybackPosition().setValue(bpViewModel.getMutablePlaybackPosition().getValue());
+        bpViewModel.getMutablePlaybackPosition().setValue(Math.max(playbackPosition, vmPlaybackPosition));
     }
 
     @Override

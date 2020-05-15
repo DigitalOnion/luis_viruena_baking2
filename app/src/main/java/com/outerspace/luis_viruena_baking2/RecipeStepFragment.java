@@ -2,6 +2,7 @@ package com.outerspace.luis_viruena_baking2;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,14 +12,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.room.util.StringUtil;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
 
-import com.outerspace.luis_viruena_baking2.api.Ingredient;
 import com.outerspace.luis_viruena_baking2.api.Recipe;
 import com.outerspace.luis_viruena_baking2.databinding.FragmentRecipeStepBinding;
 
@@ -53,7 +52,13 @@ public class RecipeStepFragment extends Fragment {
             updateWidget(recipe);
         });
 
-        mainViewModel.getMutableStepSelection().observe(getActivity(), adapter::selectPosition);
+        mainViewModel.getMutableStepSelection().observe(getActivity(), position -> {
+            adapter.selectPosition(position);
+            getActivity().getPreferences(Context.MODE_PRIVATE)
+                    .edit()
+                    .putInt(MainActivity.KEY_STEP_SELECTION, position)
+                    .apply();
+        });
 
         MutableLiveData<Integer> mutableOffset = new MutableLiveData<>();
         mutableOffset.observe(getActivity(), offset -> adapter.moveDetailRelative(offset));
@@ -61,23 +66,26 @@ public class RecipeStepFragment extends Fragment {
     }
 
     private void updateWidget(Recipe recipe) {
-        // find the max length for every field on the chart
-        int quantityLength = recipe.ingredients.stream().mapToInt(ingredient -> String.valueOf(ingredient.quantity).length()).max().orElse(0);
-        int measureLength = recipe.ingredients.stream().mapToInt(ingredient -> ingredient.measure.length()).max().orElse(0);
-        int ingredientLength = recipe.ingredients.stream().mapToInt(ingredient -> ingredient.ingredient.length()).max().orElse(0);
-        int maxLength = Math.max(quantityLength, Math.max(measureLength, ingredientLength));
-        String spaces = IntStream.range(0, maxLength).mapToObj(i -> " ").collect(Collectors.joining(""));
+        String content = "";
+        if(recipe != null) {
+            // find the max length for every field on the chart
+            int quantityLength = recipe.ingredients.stream().mapToInt(ingredient -> String.valueOf(ingredient.quantity).length()).max().orElse(0);
+            int measureLength = recipe.ingredients.stream().mapToInt(ingredient -> ingredient.measure.length()).max().orElse(0);
+            int ingredientLength = recipe.ingredients.stream().mapToInt(ingredient -> ingredient.ingredient.length()).max().orElse(0);
+            int maxLength = Math.max(quantityLength, Math.max(measureLength, ingredientLength));
+            String spaces = IntStream.range(0, maxLength).mapToObj(i -> " ").collect(Collectors.joining(""));
 
-        String content = recipe.ingredients.stream()
-                .map(ingredient -> {
-                    StringBuilder sb = new StringBuilder();
-                    String s = String.valueOf(ingredient.quantity);
-                    sb.append(spaces, 0, quantityLength - s.length()).append(s).append(" ")
-                            .append(spaces, 0, measureLength - ingredient.measure.length()).append(ingredient.measure).append(" ")
-                            .append(ingredient.ingredient).append(spaces, 0, ingredientLength - ingredient.ingredient.length())
-                            .append('\n');
-                    return sb.toString();})
-                .reduce("", String::concat);
+            content = recipe.ingredients.stream()
+                    .map(ingredient -> {
+                        StringBuilder sb = new StringBuilder();
+                        String s = String.valueOf(ingredient.quantity);
+                        sb.append(spaces, 0, quantityLength - s.length()).append(s).append(" ")
+                                .append(spaces, 0, measureLength - ingredient.measure.length()).append(ingredient.measure).append(" ")
+                                .append(ingredient.ingredient).append(spaces, 0, ingredientLength - ingredient.ingredient.length())
+                                .append('\n');
+                        return sb.toString();})
+                    .reduce("", String::concat);
+        }
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getActivity());
         RemoteViews remoteViews = new RemoteViews(getActivity().getPackageName(), R.layout.baking_widget);
@@ -85,5 +93,4 @@ public class RecipeStepFragment extends Fragment {
         remoteViews.setTextViewText(R.id.widget_ingredients, content);
         appWidgetManager.updateAppWidget(thisWidget, remoteViews);
     }
-
 }

@@ -1,7 +1,6 @@
 package com.outerspace.luis_viruena_baking2;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -11,22 +10,20 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager.widget.ViewPager;
 
-import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.outerspace.luis_viruena_baking2.api.Recipe;
 import com.outerspace.luis_viruena_baking2.databinding.ActivityMainBinding;
+import com.outerspace.luis_viruena_baking2.helper.StepToBind;
 import com.outerspace.luis_viruena_baking2.model.IRecipeModel;
 import com.outerspace.luis_viruena_baking2.model.ModelBehavior;
 import com.outerspace.luis_viruena_baking2.model.RecipeModelFactory;
@@ -37,20 +34,11 @@ import java.util.List;
 
 import timber.log.Timber;
 
-import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IMainView, ViewPager.OnPageChangeListener {
     public ActivityMainBinding binding;
     private MainViewModel mainViewModel;
     public static final String EXTRA_BEHAVIOR = "behavior";
     private int[] arrayPages;
-
-    private static final String SPLASH = "splash_tag";
-
-    @FunctionalInterface
-    interface ArraySupplier<E> {
-        E[] get(int length);
-    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -62,15 +50,13 @@ public class MainActivity extends AppCompatActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        // todo: research on why this is not working:
-        // boolean largeScreen = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE;
         boolean smallScreen = binding.mainScreenLayout.getTag().equals(getString(R.string.phone_screen));
         mainViewModel.setSmallScreen(smallScreen);
 
         // sets the toolbar
         setSupportActionBar(binding.toolbar);
 
-        // gets ViewPager ready
+        // setup ViewPager
         Class[] fragmentClassArray;
         if(mainViewModel.isSmallScreen()) {
             arrayPages = new int[] {0, 1, 2};
@@ -86,7 +72,10 @@ public class MainActivity extends AppCompatActivity {
 
         RecipePagerAdapter adapter = new RecipePagerAdapter(getSupportFragmentManager(), fragmentClassArray);
         binding.pager.setAdapter(adapter);
+        binding.pager.addOnPageChangeListener(this);
         binding.pager.setOffscreenPageLimit(2);
+
+        // ViewModel observers
 
         // this form (add the observer before setting the mutableViewPagerPage)
         // is needed to prevent a weird bug. The viewPager was moving without
@@ -146,6 +135,47 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private static final String KEY_VIEW_PAGER_PAGE = "view_pager_page";
+    public static final String KEY_RECIPE_SELECTION = "recipe_selection";
+    public static final String KEY_STEP_SELECTION = "step_selection";
+    public static final String KEY_PLAYBACK_POSITION = "playback_position";
+    public static final String KEY_VIDEO_URL = "video_url";
+
+    // onRecipeListReady is called back at the RecipeListFragment when the model returns the RecipeList
+    @Override
+    public void onRecipeListReady(List<Recipe> recipeList) {
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        int recipeSelection = preferences.getInt(KEY_RECIPE_SELECTION, -1);
+        int stepSelection = preferences.getInt(KEY_STEP_SELECTION, -1);
+
+        if(recipeSelection >= 0) {
+            Recipe recipe = recipeList.get(recipeSelection);
+            mainViewModel.getMutableRecipe().setValue(recipe);
+            mainViewModel.getMutableRecipeSelection().setValue(recipeSelection);
+            if(stepSelection >= 0) {
+                if(stepSelection == 0) {
+                    mainViewModel.getMutableStep().setValue(
+                            new StepToBind(recipe.ingredients, getString(R.string.ingredients))
+                    );
+                } else {
+                    mainViewModel.getMutableStep().setValue(
+                            new StepToBind(recipe.steps.get(stepSelection-1))
+                    );
+                }
+                mainViewModel.getMutableStepSelection().setValue(stepSelection);
+            } else {
+                mainViewModel.getMutableStep().setValue(null);
+            }
+        } else {
+            mainViewModel.getMutableRecipe().setValue(null);
+        }
+
+        if(preferences.contains(KEY_VIEW_PAGER_PAGE)) {
+            int page = preferences.getInt(KEY_VIEW_PAGER_PAGE, RECIPE_LIST_PAGE);
+            mainViewModel.getMutableViewPagerPage().setValue(page);
+        }
+    }
+
     @Override
     public void onBackPressed() {
         int page = binding.pager.getCurrentItem();
@@ -154,7 +184,17 @@ public class MainActivity extends AppCompatActivity {
         } else {
             new AlertDialog.Builder(this)
                     .setMessage(R.string.wanna_exit)
-                    .setPositiveButton(R.string.exit_app, (dialog, which) -> super.onBackPressed())
+                    .setPositiveButton(R.string.exit_app, (dialog, which) -> {
+                        super.onBackPressed();
+                        getPreferences(MODE_PRIVATE)
+                                .edit()
+                                .remove(KEY_RECIPE_SELECTION)
+                                .remove(KEY_STEP_SELECTION)
+                                .remove(KEY_VIEW_PAGER_PAGE)
+                                .remove(KEY_VIDEO_URL)
+                                .remove(KEY_PLAYBACK_POSITION)
+                                .apply();
+                    })
                     .setNegativeButton(R.string.back_to_app, null)
                     .create().show();
         }
@@ -230,4 +270,16 @@ public class MainActivity extends AppCompatActivity {
             return fragmentClassArray.length;
         }
     }
+
+    @Override
+    public void onPageSelected(int position) {
+        getPreferences(MODE_PRIVATE)
+                .edit()
+                .putInt(KEY_VIEW_PAGER_PAGE, position)
+                .apply();
+    }
+
+    @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
+    @Override public void onPageScrollStateChanged(int state) { }
+
 }

@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.outerspace.luis_viruena_baking2.api.Ingredient;
 import com.outerspace.luis_viruena_baking2.api.Recipe;
 import com.outerspace.luis_viruena_baking2.api.Step;
 import com.outerspace.luis_viruena_baking2.databinding.ItemRecipeHolderBinding;
@@ -28,35 +27,14 @@ class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.RecipeVie
 
     void setRecipe(Context context, Recipe recipe) {
         stepList.clear();
-        StepToBind stepToBind = new StepToBind();
-        stepToBind.title = context.getString(R.string.ingredients);
-        stepToBind.ingredients = ingredientsToString(recipe.ingredients);
-        stepToBind.videoURL = "";
-        stepList.add(stepToBind);
+        if(recipe != null) {
+            stepList.add(new StepToBind(recipe.ingredients, context.getString(R.string.ingredients)));
 
-        for(Step step : recipe.steps) {
-            stepToBind = new StepToBind();
-            stepToBind.title = step.shortDescription;
-            stepToBind.ingredients = "";
-            stepToBind.id = step.id;
-            stepToBind.shortDescription = step.shortDescription;
-            stepToBind.description = step.description;
-            stepToBind.videoURL = step.videoURL;
-            stepToBind.thumbnailURL = step.thumbnailURL;
-
-            stepList.add(stepToBind);
+            for(Step step : recipe.steps) {
+                stepList.add(new StepToBind(step));
+            }
         }
         notifyDataSetChanged();
-    }
-
-    private String ingredientsToString(List<Ingredient> ingredientList) {
-        String content =  ingredientList.stream()
-                .map(ingredient -> "<tr><td>" + ingredient.quantity +
-                        "</td><td>" + ingredient.measure +
-                        "</td><td>" + ingredient.ingredient +
-                        "</td></tr>\n")
-                .reduce("", String::concat);
-        return "<table>" + content + "</table>";
     }
 
     @NonNull
@@ -75,7 +53,7 @@ class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.RecipeVie
                 stepList.get(position).selected ?
                         R.drawable.border_selected_recipe_list_card :
                         R.drawable.border_recipe_list_card);
-        holder.binding.itemLayout.setOnClickListener(view -> onClickDetail(position));
+        holder.binding.itemLayout.setOnClickListener(view -> selectStep(position));
     }
 
     @Override
@@ -95,11 +73,11 @@ class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.RecipeVie
 
     void moveDetailRelative(int offset) {
         if(selectedPosition + offset >=0 && selectedPosition + offset < stepList.size()) {
-            onClickDetail(selectedPosition + offset);
+            selectStep(selectedPosition + offset);
         }
     }
 
-    private void onClickDetail(int position) {
+    private void selectStep(int position) {
         mainViewModel.getMutableStep().setValue(stepList.get(position));
         mainViewModel.getMutableStepSelection().setValue(position);
         mainViewModel.getMutableViewPagerPage().setValue(IMainView.RECIPE_DETAILS_PAGE);

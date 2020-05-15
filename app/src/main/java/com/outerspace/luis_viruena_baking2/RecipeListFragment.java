@@ -1,5 +1,6 @@
 package com.outerspace.luis_viruena_baking2;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.outerspace.luis_viruena_baking2.databinding.FragmentRecipeListBinding
 import java.net.HttpURLConnection;
 
 public class RecipeListFragment extends Fragment {
+    private IMainView mainView;
     private MainViewModel mainViewModel;
     private FragmentRecipeListBinding binding;
     private RecipeListAdapter adapter;
@@ -34,6 +36,15 @@ public class RecipeListFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if(context instanceof IMainView) {
+            mainView = (IMainView) context;
+        }
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding.recipeRecycler.setLayoutManager(
@@ -44,16 +55,24 @@ public class RecipeListFragment extends Fragment {
 
         adapter = new RecipeListAdapter(mainViewModel);
         binding.recipeRecycler.setAdapter(adapter);
+
         mainViewModel.getMutableRecipeList().observe(getActivity(), recipeList -> {
             if(recipeList.size() > 0)  {
                 mainViewModel.getMutableOnProgress().setValue(false);
                 adapter.setRecipeList(recipeList);
+                mainView.onRecipeListReady(recipeList);
             } else {
                 mainViewModel.getMutableNetworkError().setValue(HttpURLConnection.HTTP_NO_CONTENT);
             }
         });
-        mainViewModel.getMutableRecipeSelection().observe(getActivity(),
-                adapter::selectPosition);
+
+        mainViewModel.getMutableRecipeSelection().observe(getActivity(), position -> {
+                adapter.selectPosition(position);
+                getActivity().getPreferences(Context.MODE_PRIVATE)
+                        .edit()
+                        .putInt(MainActivity.KEY_RECIPE_SELECTION, position)
+                        .apply();
+            } );
     }
 
 }

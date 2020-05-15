@@ -1,5 +1,6 @@
 package com.outerspace.luis_viruena_baking2.model;
 
+@SuppressWarnings("unused")
 public enum ModelBehavior {
         NETWORK_REQUEST,
         MOCK_NETWORK_ERROR,

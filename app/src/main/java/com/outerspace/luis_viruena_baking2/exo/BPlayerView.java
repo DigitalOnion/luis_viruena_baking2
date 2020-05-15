@@ -83,8 +83,10 @@ public class BPlayerView extends PlayerView implements LifecycleObserver, Player
     }
 
     private void releasePlayer() {
-        simpleExoPlayer.release();
-        simpleExoPlayer = null;
+        if(simpleExoPlayer != null) {
+            simpleExoPlayer.release();
+            simpleExoPlayer = null;
+        }
     }
 
     private void initializePlayer() {

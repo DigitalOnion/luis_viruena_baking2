@@ -1,5 +1,6 @@
 package com.outerspace.luis_viruena_baking2;
 
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -48,8 +49,7 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
                         R.drawable.border_selected_recipe_list_card :
                         R.drawable.border_recipe_list_card);
         holder.binding.itemLayout.setOnClickListener(
-                view ->
-                        onClickItem(holder.recipe, position));
+                view -> selectRecipe(position));
     }
 
     @Override
@@ -67,23 +67,21 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
         }
     }
 
-    private void onClickItem(Recipe recipe, int position) {
-        mainViewModel.getMutableRecipe().setValue(recipe);
-        mainViewModel.getMutableRecipeSelection().setValue(position);
-        mainViewModel.getMutableStep().setValue(null);
-        mainViewModel.getMutableViewPagerPage().setValue(IMainView.RECIPE_STEPS_PAGE);
-
-        mainViewModel.getMutableRecipeList().setValue(recipeList);
+    private void selectRecipe(int position) {
+        mainViewModel.getMutableRecipe().setValue(recipeList.get(position));    // adds recipe to RecipeStepFragment
+        mainViewModel.getMutableRecipeSelection().setValue(position);           // selects Recycler item at position
+        mainViewModel.getMutableStep().setValue(null);                          // clears up step (not selected)
+        mainViewModel.getMutableViewPagerPage().setValue(IMainView.RECIPE_STEPS_PAGE);  // moves to page
     }
 
     void selectPosition(int position) {
         if(position >= 0 && position < recipeList.size()) {
             recipeList.get(position).selected = true;
-            //notifyItemChanged(position);
+            notifyItemChanged(position);
         }
         if(selectedPosition != position && selectedPosition >= 0 && selectedPosition < recipeList.size()) {
             recipeList.get(selectedPosition).selected = false;
-            //notifyItemChanged(selectedPosition);
+            notifyItemChanged(selectedPosition);
         }
         selectedPosition = position;
     }
